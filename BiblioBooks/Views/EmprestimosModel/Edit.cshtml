@@ -1,0 +1,46 @@
+﻿@model BiblioBooks.Models.EmprestimosModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="container bg-dark p-5 rounded-5">
+    <div class="mb-5 text-center">
+<h1 class="text-light">Edição de emprestime</h1>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="id" />
+            <div class="mb-3">
+                <label style="color:white" asp-for="Recebedor" class="form-label"></label>
+                <input asp-for="Recebedor" class="form-control" />
+                <span asp-validation-for="Recebedor" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label style="color:white" asp-for="Fornecedor" class="form-label"></label>
+                <input asp-for="Fornecedor" class="form-control" />
+                <span asp-validation-for="Fornecedor" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label style="color:white" asp-for="LivroEmprestado" class="form-label"></label>
+                <input asp-for="LivroEmprestado" class="form-control" />
+                <span asp-validation-for="LivroEmprestado" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Salvar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index"class="btn btn-danger">Voltar para lista</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+</div>

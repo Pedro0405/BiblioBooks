@@ -1,0 +1,43 @@
+﻿@model BiblioBooks.Models.EmprestimosModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+<div class="container bg-dark p-5 rounded-5">
+
+<h1 class="text-light">Detalhes do Emprestimo</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt style="color:white" class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Recebedor)
+        </dt>
+        <dd style="color:white" class = "col-sm-10">
+            @Html.DisplayFor(model => model.Recebedor)
+        </dd>
+        <dt style="color:white" class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Fornecedor)
+        </dt>
+        <dd style="color:white" class = "col-sm-10">
+            @Html.DisplayFor(model => model.Fornecedor)
+        </dd>
+        <dt style="color:white" style="color:white" class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.LivroEmprestado)
+        </dt>
+        <dd style="color:white" class = "col-sm-10">
+            @Html.DisplayFor(model => model.LivroEmprestado)
+        </dd>
+        <dt style="color:white" class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DataultimaAtualizacao)
+        </dt>
+        <dd style="color:white" class = "col-sm-10">
+            @Html.DisplayFor(model => model.DataultimaAtualizacao)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" class="btn btn-info mx-2" asp-route-id="@Model?.id">Editar</a> |
+    <a asp-action="Index" class="btn btn-danger mx-2">Voltar para lista</a>
+</div>
+</div>
