@@ -37,7 +37,10 @@
                 @Html.DisplayNameFor(model => model.LivroEmprestado)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DataultimaAtualizacao)
+                @Html.DisplayNameFor(model => model.DataEmprestimo)
+            </th>
+              <th>
+                    <p> Atrasado: </p>
             </th>
             <th></th>
         </tr>
@@ -55,8 +58,18 @@
                 @Html.DisplayFor(modelItem => item.LivroEmprestado)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DataultimaAtualizacao)
+                @Html.DisplayFor(modelItem => item.DataEmprestimo)
             </td>
+                 <td>
+                       @if(item.DataDevolucao < DateTime.Now)
+                       {
+                         <p> Sim</p>
+                       }
+                       else
+                       {
+                         <p> Não </p>
+                       }
+                </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.id" class="btn btn-warning mx-2">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.id" class="btn btn-info mx-2">Details</a> |

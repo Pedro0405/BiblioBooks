@@ -19,7 +19,26 @@ namespace BiblioBooks.Models
         [Required(ErrorMessage = "O nome do livro Emprestado é necessario ")]
         [Display(Name = "Nome do livro")]
         public string LivroEmprestado { get; set; }
-        public DateTime DataultimaAtualizacao { get; set; } = DateTime.Now;
+
+        [DataType(DataType.Date)]
+        [Display(Name = "Data do emprestimo")]
+
+        public DateTime DataEmprestimo { get; set; }
+        [DataType(DataType.Date)]
+        [Display(Name = "Data para devolução")]
+        public DateTime DataDevolucao { get; set; }
+
+        [Display(Name = "Dias para devolução")]
+
+        public int DiasParaDevolver
+        {
+            get
+            {
+                // Subtrai DataEmprestimo de DataDevolucao e extrai o número de dias.
+                TimeSpan diff = DataDevolucao - DataEmprestimo;
+                return diff.Days;
+            }
+        }
 
     }
 }

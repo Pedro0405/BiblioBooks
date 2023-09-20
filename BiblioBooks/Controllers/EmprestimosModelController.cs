@@ -56,10 +56,11 @@ namespace BiblioBooks.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,Recebedor,Fornecedor,LivroEmprestado,DataultimaAtualizacao")] EmprestimosModel emprestimosModel)
+        public async Task<IActionResult> Create([Bind("id,Recebedor,Fornecedor,LivroEmprestado,DataEmprestimo, DataDevolucao, DiasParaDevolver")] EmprestimosModel emprestimosModel)
         {
             if (ModelState.IsValid)
             {
+                emprestimosModel.DataEmprestimo = DateTime.Now.ToLocalTime();
                 _context.Add(emprestimosModel);
                 await _context.SaveChangesAsync();
                 TempData["MenssagemSucesso"] = "Cadastro realizado com sucesso";
@@ -90,7 +91,7 @@ namespace BiblioBooks.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,Recebedor,Fornecedor,LivroEmprestado,DataultimaAtualizacao")] EmprestimosModel emprestimosModel)
+        public async Task<IActionResult> Edit(int id, [Bind("id,Recebedor,Fornecedor,LivroEmprestado,DataEmprestimo,DataDevolucao,DiasParaDevolver")] EmprestimosModel emprestimosModel)
         {
             if (id != emprestimosModel.id)
             {
@@ -99,8 +100,10 @@ namespace BiblioBooks.Controllers
 
             if (ModelState.IsValid)
             {
+                EmprestimosModel ORIGINALEMPRESTIMO = _context.Emprestimos.AsNoTracking().FirstOrDefault(x => x.id == emprestimosModel.id);
                 try
                 {
+                    emprestimosModel.DataEmprestimo = ORIGINALEMPRESTIMO.DataEmprestimo;
                     _context.Update(emprestimosModel);
                     await _context.SaveChangesAsync();
                 }
