@@ -9,7 +9,9 @@ namespace BiblioBooks.Models
         [Required(ErrorMessage = "O nome do recebor é necessario ")]
         [Display(Name = "Recebedor")]
         public string Recebedor { get; set; }
-        
+
+        [Display(Name = "Imagem do Livro")]
+        public string? ImagemLivro { get; set; }
 
         [Required(ErrorMessage = "O nome do fornecedor é necessario ")]
         [Display(Name = "Fornecedor")]

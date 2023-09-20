@@ -7,16 +7,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BiblioBooks.Data;
 using BiblioBooks.Models;
+using System.Security.Cryptography.X509Certificates;
 
 namespace BiblioBooks.Controllers
 {
     public class EmprestimosModelController : Controller
     {
         private readonly AplicationDbContext _context;
-
-        public EmprestimosModelController(AplicationDbContext context)
+        private string caminhoServidor;
+        public EmprestimosModelController(AplicationDbContext context, IWebHostEnvironment sistmea)
         {
             _context = context;
+            caminhoServidor = sistmea.WebRootPath;
         }
 
         // GET: EmprestimosModel
@@ -56,10 +58,22 @@ namespace BiblioBooks.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,Recebedor,Fornecedor,LivroEmprestado,DataEmprestimo, DataDevolucao, DiasParaDevolver")] EmprestimosModel emprestimosModel)
+        public async Task<IActionResult> Create([Bind("id,ImagemLivro,Recebedor,Fornecedor,LivroEmprestado,DataEmprestimo, DataDevolucao, DiasParaDevolver")] EmprestimosModel emprestimosModel, IFormFile ImagemLivro)
         {
             if (ModelState.IsValid)
             {
+
+                string caminhoParaSalvar = caminhoServidor + "\\Images\\";
+                string novoNomeParaImagen = Guid.NewGuid().ToString() + "_" + ImagemLivro.FileName;
+                if (!Directory.Exists(caminhoParaSalvar))
+                {
+                    Directory.CreateDirectory(caminhoParaSalvar);
+                }
+                using (var stream = System.IO.File.Create(caminhoParaSalvar + novoNomeParaImagen))
+                {
+                    ImagemLivro.CopyToAsync(stream);
+                    emprestimosModel.ImagemLivro = novoNomeParaImagen;
+                }
                 emprestimosModel.DataEmprestimo = DateTime.Now.ToLocalTime();
                 _context.Add(emprestimosModel);
                 await _context.SaveChangesAsync();
