@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using BiblioBooks.Data;
 using BiblioBooks.Models;
 using System.Security.Cryptography.X509Certificates;
+using ClosedXML.Excel;
+using System.Data;
 
 namespace BiblioBooks.Controllers
 {
@@ -24,9 +26,9 @@ namespace BiblioBooks.Controllers
         // GET: EmprestimosModel
         public async Task<IActionResult> Index()
         {
-              return _context.Emprestimos != null ? 
-                          View(await _context.Emprestimos.ToListAsync()) :
-                          Problem("Entity set 'AplicationDbContext.Emprestimos'  is null.");
+            return _context.Emprestimos != null ?
+                        View(await _context.Emprestimos.ToListAsync()) :
+                        Problem("Entity set 'AplicationDbContext.Emprestimos'  is null.");
         }
 
         // GET: EmprestimosModel/Details/5
@@ -105,7 +107,7 @@ namespace BiblioBooks.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,Recebedor,Fornecedor,LivroEmprestado,DataEmprestimo,DataDevolucao,DiasParaDevolver")] EmprestimosModel emprestimosModel)
+        public async Task<IActionResult> Edit(int id, [Bind("id,Recebedor, ImagemLivro, Fornecedor,LivroEmprestado,DataEmprestimo,DataDevolucao,DiasParaDevolver")] EmprestimosModel emprestimosModel)
         {
             if (id != emprestimosModel.id)
             {
@@ -115,8 +117,10 @@ namespace BiblioBooks.Controllers
             if (ModelState.IsValid)
             {
                 EmprestimosModel ORIGINALEMPRESTIMO = _context.Emprestimos.AsNoTracking().FirstOrDefault(x => x.id == emprestimosModel.id);
+                
                 try
                 {
+                    emprestimosModel.ImagemLivro = ORIGINALEMPRESTIMO.ImagemLivro;
                     emprestimosModel.DataEmprestimo = ORIGINALEMPRESTIMO.DataEmprestimo;
                     _context.Update(emprestimosModel);
                     await _context.SaveChangesAsync();
@@ -171,7 +175,7 @@ namespace BiblioBooks.Controllers
             {
                 _context.Emprestimos.Remove(emprestimosModel);
             }
-            
+
             await _context.SaveChangesAsync();
             TempData["MenssagemSucesso"] = "Exclusão realizada com sucesso";
             return RedirectToAction(nameof(Index));
@@ -179,7 +183,53 @@ namespace BiblioBooks.Controllers
 
         private bool EmprestimosModelExists(int id)
         {
-          return (_context.Emprestimos?.Any(e => e.id == id)).GetValueOrDefault();
+            return (_context.Emprestimos?.Any(e => e.id == id)).GetValueOrDefault();
         }
-    }
+        public IActionResult Exportar()
+        {
+            var dados = GetDados();
+
+            using (XLWorkbook workBook = new XLWorkbook())
+            {
+                workBook.AddWorksheet(dados, "Dados Empréstimos");
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    workBook.SaveAs(ms);
+                    return File(ms.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Emprestimo.xls");
+                }
+
+
+            } 
+        }
+
+        private DataTable GetDados()
+        {
+            DataTable dataTable = new DataTable();
+
+            dataTable.TableName = "Dados emprestimos";
+
+
+            dataTable.Columns.Add("Recebedor", typeof(string));
+            dataTable.Columns.Add("Fornecedor", typeof(string));
+            dataTable.Columns.Add("Livro", typeof(string));
+            dataTable.Columns.Add("Data Emprestimos", typeof(DateTime));
+            dataTable.Columns.Add("Data para devolução", typeof(DateTime));
+            dataTable.Columns.Add("Dias para devolução", typeof(int));
+
+            var dados = _context.Emprestimos.ToList();
+
+            if (dados.Count > 0)
+
+            {
+                dados.ForEach(emprestimo =>
+                {
+                    dataTable.Rows.Add(emprestimo.Recebedor, emprestimo.Fornecedor, emprestimo.LivroEmprestado, emprestimo.DataEmprestimo, emprestimo.DataDevolucao, emprestimo.DiasParaDevolver);
+                });
+            }
+
+            return dataTable;
+
+
+        }
+    } 
 }
